@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentManager-BackEnd", "StudentManager-BackEnd\StudentManager-BackEnd.csproj", "{C7D595AB-B9FB-4BB0-804C-C88555B64357}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentManager-FrontEnd", "StudentManager-FrontEnd\StudentManager-FrontEnd.csproj", "{F747A142-952C-452C-BD62-FE3049AADD13}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C7D595AB-B9FB-4BB0-804C-C88555B64357}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7D595AB-B9FB-4BB0-804C-C88555B64357}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7D595AB-B9FB-4BB0-804C-C88555B64357}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7D595AB-B9FB-4BB0-804C-C88555B64357}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F747A142-952C-452C-BD62-FE3049AADD13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F747A142-952C-452C-BD62-FE3049AADD13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F747A142-952C-452C-BD62-FE3049AADD13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F747A142-952C-452C-BD62-FE3049AADD13}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4910F23C-9DAA-43B0-88A2-E003CB48B1EF}
+	EndGlobalSection
+EndGlobal

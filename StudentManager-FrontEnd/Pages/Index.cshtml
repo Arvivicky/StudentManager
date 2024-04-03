@@ -1,0 +1,10 @@
+﻿@page
+@model IndexModel
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    @if (ViewData["str"] != null)
+    {
+        <p>@ViewData["str"]</p>
+    }
+</div>
