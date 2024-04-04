@@ -1,6 +1,6 @@
 ﻿using Entity;
 using Microsoft.EntityFrameworkCore;
-
+using StudentManager_BackEnd.Entity;
 namespace Repository
 {
     public class StudentsRepo : IStudentsRepo

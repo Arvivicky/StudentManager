@@ -2,6 +2,7 @@ using Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service;
+using StudentManager_BackEnd.Entity;
 
 namespace Controllers
 {

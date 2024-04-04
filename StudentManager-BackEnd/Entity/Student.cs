@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Entity
+namespace StudentManager_BackEnd.Entity
 {
     public class Student
     {

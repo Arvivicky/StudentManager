@@ -1,4 +1,4 @@
-﻿namespace Dto
+﻿namespace StudentManager_BackEnd.Dto
 {
     public class UserDto
     {

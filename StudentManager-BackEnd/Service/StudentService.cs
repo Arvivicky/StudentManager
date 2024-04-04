@@ -1,7 +1,7 @@
 ﻿using Entity;
 using Microsoft.EntityFrameworkCore;
 using Repository;
-
+using StudentManager_BackEnd.Entity;
 namespace Service
 {
     public class StudentService : IStudentService

@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 using BCrypt.Net;
 using Dto;
 using Entity;
+using StudentManager_BackEnd.Dto;
+using StudentManager_BackEnd.Entity;
+using StudentManager_BackEnd.Service;
+using StudentManager_BackEnd.Repository;
 
 namespace Controllers
 {
@@ -19,11 +23,16 @@ namespace Controllers
     {
         private readonly ContextDb _context;
         private readonly IConfiguration _configuration;
+        private readonly IJwtService jwtService;
+        private readonly IUserRepo userRepo;
 
-        public AuthController(ContextDb context, IConfiguration configuration)
+        public AuthController(ContextDb context, IConfiguration configuration,
+            IJwtService jwtService,IUserRepo userRepo)
         {
             _context = context;
             _configuration = configuration;
+            this.jwtService = jwtService;
+            this.userRepo = userRepo;
         }
 
         [HttpGet("Auth")]
@@ -35,34 +44,35 @@ namespace Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserDto model)
         {
-            if (await _context.Users.AnyAsync(u => u.Username == model.Username))
+            var user=await userRepo.LoadUser(model);
+            if (user!= null)
+            {
                 return Conflict("Username already exists");
-
+            }
+            
             var newUser = new User
             {
                 Username = model.Username,
-                Password = HashPassword(model.Password)
+                Password = jwtService.HashPassword(model.Password)
             };
 
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-
-            return Ok();
+            user=await userRepo.CreateUser(newUser);
+            return Ok(user);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserDto model)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
+            var user = await userRepo.LoadUser(model);
 
-            if (user == null || !VerifyPassword(model.Password, user.Password))
+            if (user == null || !jwtService.VerifyPassword(model.Password, user.Password))
                 return Unauthorized("Invalid username or password");
 
-            var accessToken = GenerateJwtToken(user);
-            var refreshToken = GenerateRefreshToken();
+            var accessToken = jwtService.GenerateJwtToken(user);
+            var refreshToken = jwtService.GenerateRefreshToken();
 
             user.RefreshToken = refreshToken;
-            await _context.SaveChangesAsync();
+            await userRepo.UpdateUser(user, user.Id);
 
             return Ok(new { Token = accessToken, RefreshToken = refreshToken });
         }
@@ -70,55 +80,17 @@ namespace Controllers
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshToken(RefreshTokenDto refreshTokenDto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshTokenDto.RefreshToken);
-
+            var user = await userRepo.LoadRefreshToken(refreshTokenDto);
             if (user == null)
                 return BadRequest("Invalid refresh token");
 
-            var accessToken = GenerateJwtToken(user);
-            var newRefreshToken = GenerateRefreshToken();
+            var accessToken = jwtService.GenerateJwtToken(user);
+            var newRefreshToken = jwtService.GenerateRefreshToken();
 
             user.RefreshToken = newRefreshToken;
-            await _context.SaveChangesAsync();
+            await userRepo.UpdateUser(user, user.Id);
 
             return Ok(new { Token = accessToken, RefreshToken = newRefreshToken });
-        }
-
-        private string GenerateJwtToken(User user)
-        {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                _configuration["Jwt:Issuer"],
-                _configuration["Jwt:Issuer"],
-                claims,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private bool VerifyPassword(string password, string hashedPassword)
-        {
-            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
-        }
-
-        private string HashPassword(string password)
-        {
-            return BCrypt.Net.BCrypt.HashPassword(password);
-        }
-
-        private string GenerateRefreshToken()
-        {
-            return Guid.NewGuid().ToString();
         }
     }
 }

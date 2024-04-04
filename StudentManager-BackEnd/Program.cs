@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repository;
 using Service;
+using StudentManager_BackEnd.Repository;
+using StudentManager_BackEnd.Service;
 using System;
 using System.Text;
 
@@ -35,6 +37,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentsRepo, StudentsRepo>();
+builder.Services.AddSingleton<IJwtService, JwtService>();
+builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 // AddSwaggerGen service configuration
 builder.Services.AddSwaggerGen(c =>
@@ -75,6 +79,13 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API V1");
     });
 }
+
+app.UseCors(options =>
+{
+    options.AllowAnyOrigin();
+    options.AllowAnyMethod();
+    options.AllowAnyHeader();
+});
 
 app.UseHttpsRedirection();
 

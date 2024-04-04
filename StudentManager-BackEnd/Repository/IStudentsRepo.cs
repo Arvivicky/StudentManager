@@ -1,5 +1,5 @@
 ﻿using Entity;
-
+using StudentManager_BackEnd.Entity;
 namespace Repository
 {
     public interface IStudentsRepo

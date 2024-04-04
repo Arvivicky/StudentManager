@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-
+using StudentManager_BackEnd.Entity;
 namespace Entity
 {
     public class ContextDb : DbContext
