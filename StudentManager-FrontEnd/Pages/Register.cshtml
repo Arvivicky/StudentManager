@@ -1,16 +1,15 @@
 ﻿@page
-@model StudentManager_FrontEnd.Pages.LoginModel
+@model StudentManager_FrontEnd.Pages.RegisterModel
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Register";
 }
 
-<h1>Login</h1>
+<h1>@ViewData["Title"]</h1>
 
 @if (!string.IsNullOrEmpty(TempData["Message"] as string))
 {
     <div class="alert alert-info" role="alert">
         @TempData["Message"]
-        <span>@ViewData["jwt"]</span>
     </div>
 }
 
@@ -25,13 +24,5 @@
         <input asp-for="UserDto.Password" type="password" class="form-control" />
         <span asp-validation-for="UserDto.Password" class="text-danger"></span>
     </div>
-    <button style="margin-top:10px" type="submit" class="btn btn-primary">Login</button>
+    <button style="margin-top:10px" type="submit" class="btn btn-primary">Register</button>
 </form>
-
-    <script>
-        var jsonResponse = @Html.Raw(ViewData["ResponseData"]);
-        localStorage.setItem('jwtToken', jsonResponse.token);
-        setTimeout(() => {
-            window.location.href="/Student";
-        }, 2500);
-    </script>

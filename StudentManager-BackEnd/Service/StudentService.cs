@@ -1,30 +1,23 @@
 ﻿using Entity;
 using Microsoft.EntityFrameworkCore;
 using Repository;
-
+using StudentManager_BackEnd.Entity;
 namespace Service
 {
     public class StudentService : IStudentService
     {
-        private readonly IStudentsRepo _studentsRepo;
+        private readonly IStudentsRepo studentsRepo;
 
         public StudentService(IStudentsRepo studentsRepo)
         {
-            try
-            {
-                _studentsRepo = studentsRepo;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+            this.studentsRepo = studentsRepo;
         }
 
         public async Task<List<Student>> GetAllStudents()
         {
             try
             {
-                List<Student> students = await _studentsRepo.GetAllStudents();
+                List<Student> students = await studentsRepo.GetAllStudents();
                 return students;
             }
             catch (Exception e)
@@ -37,7 +30,7 @@ namespace Service
         {
             try
             {
-                Student student = await _studentsRepo.GetById(Id);
+                Student student = await studentsRepo.GetById(Id);
                 return student;
             }
             catch (Exception e)
@@ -50,7 +43,7 @@ namespace Service
         {
             try
             {
-                Student studentSave = await _studentsRepo.InsertStudent(student);
+                Student studentSave = await studentsRepo.InsertStudent(student);
                 return studentSave;
             }
             catch (Exception e)
@@ -63,7 +56,7 @@ namespace Service
         {
             try
             {
-                Student studentUpdate = await _studentsRepo.UpdateStudent(student, Id);
+                Student studentUpdate = await studentsRepo.UpdateStudent(student, Id);
                 return studentUpdate;
             }
             catch (Exception e)
@@ -73,7 +66,7 @@ namespace Service
         }
         public async Task DeleteStudent(int Id)
         {
-            await _studentsRepo.DeleteStudent(Id);
+            await studentsRepo.DeleteStudent(Id);
         }
     }
 }

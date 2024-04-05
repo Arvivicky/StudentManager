@@ -2,6 +2,8 @@
 {
     public class RefreshTokenDto
     {
-        public string? RefreshToken { get; set; }
+        public required string? Token { get; set; }
+        public DateTime TokenCreated { get; set; }= DateTime.Now;
+        public DateTime Expires {  get; set; }
     }
 }
