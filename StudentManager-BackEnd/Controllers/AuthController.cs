@@ -21,16 +21,11 @@ namespace Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly ContextDb _context;
-        private readonly IConfiguration _configuration;
         private readonly IJwtService jwtService;
         private readonly IUserRepo userRepo;
 
-        public AuthController(ContextDb context, IConfiguration configuration,
-            IJwtService jwtService,IUserRepo userRepo)
+        public AuthController(IJwtService jwtService,IUserRepo userRepo)
         {
-            _context = context;
-            _configuration = configuration;
             this.jwtService = jwtService;
             this.userRepo = userRepo;
         }
@@ -64,30 +59,37 @@ namespace Controllers
         public async Task<IActionResult> Login(UserDto model)
         {
             var user = await userRepo.LoadUser(model);
-
-            if (user == null || !jwtService.VerifyPassword(model.Password, user.Password))
-                return Unauthorized("Invalid username or password");
+            if (user == null)
+                return Unauthorized("Invalid Username");
+            if (!jwtService.VerifyPassword(model.Password, user.Password))
+                return Unauthorized("Invalid Password");
 
             var accessToken = jwtService.GenerateJwtToken(user);
             var refreshToken = jwtService.GenerateRefreshToken();
 
-            user.RefreshToken = refreshToken;
+            user.RefreshToken = refreshToken.Token;
+            user.TokenCreated = refreshToken.TokenCreated;
+            user.TokenExpires = refreshToken.Expires;
             await userRepo.UpdateUser(user, user.Id);
 
             return Ok(new { Token = accessToken, RefreshToken = refreshToken });
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshToken(RefreshTokenDto refreshTokenDto)
+        public async Task<IActionResult> RefreshToken(String refreshToken)
         {
-            var user = await userRepo.LoadRefreshToken(refreshTokenDto);
+            var user = await userRepo.LoadRefreshToken(refreshToken);
             if (user == null)
                 return BadRequest("Invalid refresh token");
+            if (user.TokenExpires> DateTime.Now)
+                return Unauthorized("Token Expired");
 
             var accessToken = jwtService.GenerateJwtToken(user);
             var newRefreshToken = jwtService.GenerateRefreshToken();
 
-            user.RefreshToken = newRefreshToken;
+            user.RefreshToken = newRefreshToken.Token;
+            user.TokenCreated = newRefreshToken.TokenCreated;
+            user.TokenExpires = newRefreshToken.Expires;
             await userRepo.UpdateUser(user, user.Id);
 
             return Ok(new { Token = accessToken, RefreshToken = newRefreshToken });

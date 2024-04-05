@@ -1,4 +1,5 @@
-﻿using StudentManager_BackEnd.Entity;
+﻿using Dto;
+using StudentManager_BackEnd.Entity;
 
 namespace StudentManager_BackEnd.Service
 {
@@ -7,7 +8,7 @@ namespace StudentManager_BackEnd.Service
         public string GenerateJwtToken(User user);
         public bool VerifyPassword(string password, string hashedPassword);
         public string HashPassword(string password);
-        public string GenerateRefreshToken();
+        public RefreshTokenDto GenerateRefreshToken();
 
     }
 }

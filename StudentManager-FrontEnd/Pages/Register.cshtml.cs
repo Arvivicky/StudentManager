@@ -47,7 +47,7 @@ namespace StudentManager_FrontEnd.Pages
             }
             else
             {
-                TempData["Message"] = "Registration failed. Please try again.";
+                TempData["Message"] = await response.Content.ReadAsStringAsync();
                 return Page();
             }
 

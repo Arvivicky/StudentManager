@@ -19,6 +19,7 @@ var configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 
 // Add JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -6,18 +6,17 @@ using StudentManager_BackEnd.Entity;
 
 namespace Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class StudentController : ControllerBase
     {
-        private readonly ILogger<StudentController> _logger;
-        private readonly IStudentService _studentService;
+        private readonly IStudentService studentService;
 
 
-        public StudentController(ILogger<StudentController> logger, IStudentService studentService)
+        public StudentController(IStudentService studentService)
         {
-            _logger = logger;
-            _studentService = studentService;
+            this.studentService = studentService;
         }
 
         [HttpGet]
@@ -29,7 +28,7 @@ namespace Controllers
         [HttpGet("getAll")]
         public async Task<ActionResult<List<Student>>> GetAll()
         {
-            List<Student> students = await _studentService.GetAllStudents();
+            List<Student> students = await studentService.GetAllStudents();
             return Ok(students);
         }
 
@@ -37,7 +36,7 @@ namespace Controllers
         [HttpGet("getById/{int Id}")]
         public async Task<ActionResult<List<Student>>> GetById(int Id)
         {
-            Student student = await _studentService.GetById(Id);
+            Student student = await studentService.GetById(Id);
             return Ok(student);
         }
 
@@ -45,7 +44,7 @@ namespace Controllers
         [HttpPost("/addStudent")]
         public async Task<ActionResult<Student>> Insert(Student student)
         {
-            Student students = await _studentService.InsertStudent(student);
+            Student students = await studentService.InsertStudent(student);
             return Ok(students);
         }
 
@@ -53,7 +52,7 @@ namespace Controllers
         [HttpPut("/updateStudent/{int Id}")]
         public async Task<ActionResult<Student>> Update(Student student, int Id)
         {
-            Student students = await _studentService.UpdateStudent(student, Id);
+            Student students = await studentService.UpdateStudent(student, Id);
             return Ok(students);
         }
 
@@ -61,7 +60,7 @@ namespace Controllers
         [HttpDelete("/deleteStudent/{int Id}")]
         public async Task<ActionResult<string>> Delete(int Id)
         {
-            await _studentService.DeleteStudent(Id);
+            await studentService.DeleteStudent(Id);
             return Ok("Deleted Successfully");
         }
 

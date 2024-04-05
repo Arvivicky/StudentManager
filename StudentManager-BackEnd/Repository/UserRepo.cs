@@ -36,9 +36,9 @@ namespace StudentManager_BackEnd.Repository
             throw new NotImplementedException();
         }
 
-        public async Task<User> LoadRefreshToken(RefreshTokenDto refreshTokenDto)
+        public async Task<User> LoadRefreshToken(String refreshToken)
         {
-            var loaduser=await contextDb.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshTokenDto.RefreshToken);
+            var loaduser=await contextDb.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
             return loaduser;
         }
     }

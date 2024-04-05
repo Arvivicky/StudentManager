@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.VisualBasic;
+using System.ComponentModel.DataAnnotations;
 
 namespace StudentManager_BackEnd.Entity
 {
@@ -9,5 +10,7 @@ namespace StudentManager_BackEnd.Entity
         public string Username { get; set; }
         public string Password { get; set; }
         public string? RefreshToken { get; set; }
+        public DateTime TokenCreated { get; set; }
+        public DateTime TokenExpires { get; set; }
     }
 }

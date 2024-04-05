@@ -1,3 +1,6 @@
+using System.Net;
+using System.Net.Http.Headers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,14 +20,30 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
         builder =>
         {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
+            builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
         });
 });
+builder.Services.AddHttpContextAccessor();
 
 // Add HttpClient
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("YourHttpClient", client =>
+{
+    client.BaseAddress = new Uri("https://your-api-url.com");
+    client.DefaultRequestHeaders.Accept.Clear();
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    return new HttpClientHandler
+    {
+        UseCookies = true,
+        UseDefaultCredentials = false,
+        CookieContainer = new CookieContainer(),
+        AllowAutoRedirect = true
+    };
+});
 
 var app = builder.Build();
 
@@ -41,13 +60,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Use session middleware
+app.UseSession();
+
 // Use CORS policy
 app.UseCors("AllowAll");
 
 app.UseAuthorization();
-
-// Use session middleware
-app.UseSession();
 
 app.MapRazorPages();
 

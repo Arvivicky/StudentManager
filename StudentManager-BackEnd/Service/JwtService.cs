@@ -1,5 +1,7 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Dto;
+using Microsoft.IdentityModel.Tokens;
 using StudentManager_BackEnd.Entity;
+using StudentsManagerSQL.Migrations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -8,11 +10,13 @@ namespace StudentManager_BackEnd.Service
 {
     public class JwtService:IJwtService
     {
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration configuration;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public JwtService(IConfiguration configuration)
+        public JwtService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _configuration = configuration;
+            this.configuration = configuration;
+            this.httpContextAccessor = httpContextAccessor;
         }
         public string GenerateJwtToken(User user)
         {
@@ -21,18 +25,24 @@ namespace StudentManager_BackEnd.Service
                 new Claim(ClaimTypes.Name,user.Username)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                _configuration["Jwt:Issuer"],
-                _configuration["Jwt:Issuer"],
+                configuration["Jwt:Issuer"],
+                configuration["Jwt:Issuer"],
                 claims,
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds
             );
+            var jwt= new JwtSecurityTokenHandler().WriteToken(token); ;
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+            };
+            httpContextAccessor.HttpContext.Response.Cookies.Append("Jwt",jwt, cookieOptions);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return jwt;
         }
 
         public bool VerifyPassword(string password, string hashedPassword)
@@ -45,9 +55,21 @@ namespace StudentManager_BackEnd.Service
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
-        public string GenerateRefreshToken()
+        public RefreshTokenDto GenerateRefreshToken()
         {
-            return Guid.NewGuid().ToString();
+            var refreshToken = new RefreshTokenDto
+            {
+                Token=Guid.NewGuid().ToString(),
+                Expires= DateTime.Now.AddDays(7)
+            };
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = refreshToken.Expires,
+            };
+            httpContextAccessor.HttpContext.Response.Cookies.Append("refreshToken",refreshToken.Token,cookieOptions);
+
+            return refreshToken;
         }
     }
 }

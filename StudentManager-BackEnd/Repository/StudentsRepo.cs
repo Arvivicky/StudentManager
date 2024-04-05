@@ -5,21 +5,21 @@ namespace Repository
 {
     public class StudentsRepo : IStudentsRepo
     {
-        private readonly ContextDb _contextDb;
+        private readonly ContextDb contextDb;
 
         public StudentsRepo(ContextDb contextDb)
         {
-            _contextDb = contextDb;
+            this.contextDb = contextDb;
         }
 
         public async Task<List<Student>> GetAllStudents()
         {
-            List<Student> students = await _contextDb.Student.ToListAsync();
+            List<Student> students = await contextDb.Student.ToListAsync();
             return students;
         }
         public async Task<Student> GetById(int Id)
         {
-            Student student = await _contextDb.Student.FindAsync(Id);
+            Student student = await contextDb.Student.FindAsync(Id);
             if (student == null)
             {
                 throw new Exception("Student not found");
@@ -29,14 +29,14 @@ namespace Repository
 
         public async Task<Student> InsertStudent(Student student)
         {
-            var entry = await _contextDb.Student.AddAsync(student);
-            await _contextDb.SaveChangesAsync();
+            var entry = await contextDb.Student.AddAsync(student);
+            await contextDb.SaveChangesAsync();
             return entry.Entity;
         }
 
         public async Task<Student> UpdateStudent(Student student, int Id)
         {
-            Student studentEdit = await _contextDb.Student.FindAsync(Id);
+            Student studentEdit = await contextDb.Student.FindAsync(Id);
             if (studentEdit == null)
             {
                 throw new Exception("Student not found");
@@ -49,18 +49,18 @@ namespace Repository
                 studentEdit.Age = student.Age;
             if (student.Cgpa != 0)
                 studentEdit.Cgpa = student.Cgpa;
-            await _contextDb.SaveChangesAsync();
+            await contextDb.SaveChangesAsync();
             return studentEdit;
         }
         public async Task DeleteStudent(int Id)
         {
-            Student student = await _contextDb.Student.FindAsync(Id);
+            Student student = await contextDb.Student.FindAsync(Id);
             if (student == null)
             {
                 throw new Exception("Student not found");
             }
-            _contextDb.Remove(student);
-            await _contextDb.SaveChangesAsync();
+            contextDb.Remove(student);
+            await contextDb.SaveChangesAsync();
         }
     }
 }
