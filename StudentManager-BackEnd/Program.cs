@@ -1,12 +1,13 @@
 using Entity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repository;
 using Service;
+using StudentManager_BackEnd.Helpers;
 using StudentManager_BackEnd.Repository;
 using StudentManager_BackEnd.Service;
 using System;
@@ -21,21 +22,12 @@ var configuration = builder.Configuration;
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 
-// Add JWT authentication
+//Add custom JwtHandler
+builder.Services.AddTransient<CustomJwtHandler>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = configuration["Jwt:Issuer"],
-            ValidAudience = configuration["Jwt:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
-        };
-    });
+    .AddScheme<JwtBearerOptions, CustomJwtHandler>(JwtBearerDefaults.AuthenticationScheme, options => { });
 
+// Add services for repositories and services
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentsRepo, StudentsRepo>();
 builder.Services.AddSingleton<IJwtService, JwtService>();
@@ -66,6 +58,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Add DbContext
 builder.Services.AddDbContext<ContextDb>(options =>
     options.UseSqlServer("Server=PAL-I005;Database=studentDb;Trusted_Connection=True;Encrypt=True;TrustServerCertificate=True;"));
 
@@ -90,9 +83,14 @@ app.UseCors(options =>
 
 app.UseHttpsRedirection();
 
-// Add JWT authentication middleware
+// Add the exception handling middleware
+app.UseMiddleware<ExceptionHandlerMiddleware>();
+
+// Enable authentication
 app.UseAuthentication();
 
+
+// Enable authorization
 app.UseAuthorization();
 
 app.MapControllers();

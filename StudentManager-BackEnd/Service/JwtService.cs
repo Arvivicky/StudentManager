@@ -32,7 +32,7 @@ namespace StudentManager_BackEnd.Service
                 configuration["Jwt:Issuer"],
                 configuration["Jwt:Issuer"],
                 claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddMinutes(1),
                 signingCredentials: creds
             );
             var jwt= new JwtSecurityTokenHandler().WriteToken(token); ;

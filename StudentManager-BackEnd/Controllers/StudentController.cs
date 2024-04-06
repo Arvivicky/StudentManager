@@ -1,4 +1,5 @@
 using Entity;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service;
@@ -28,6 +29,7 @@ namespace Controllers
         [HttpGet("getAll")]
         public async Task<ActionResult<List<Student>>> GetAll()
         {
+            var authenticateResult = HttpContext.AuthenticateAsync();
             List<Student> students = await studentService.GetAllStudents();
             return Ok(students);
         }

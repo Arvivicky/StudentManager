@@ -14,9 +14,11 @@ using StudentManager_BackEnd.Dto;
 using StudentManager_BackEnd.Entity;
 using StudentManager_BackEnd.Service;
 using StudentManager_BackEnd.Repository;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers
 {
+    [AllowAnonymous]
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase

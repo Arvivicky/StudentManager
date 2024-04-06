@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,6 +12,7 @@ using System.Text;
 
 namespace StudentManager_FrontEnd.Pages
 {
+
     public class StudentModel : PageModel
     {
         private readonly HttpClient httpClient;
@@ -31,12 +33,17 @@ namespace StudentManager_FrontEnd.Pages
         {
             var jwtToken = httpContextAccessor.HttpContext.Request.Cookies["jwt"];
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-
+            
             var response = await httpClient.GetAsync("https://localhost:7089/Student/getAll");
             var responseBody = await response.Content.ReadAsStringAsync();
-            ViewData["StudentList"] = responseBody;
 
-            return Page();
+            if (response.IsSuccessStatusCode)
+            {
+                responseBody = await response.Content.ReadAsStringAsync();
+                ViewData["StudentList"] = responseBody;
+                return Page();
+            }
+            return Unauthorized();
         }
 
         public async Task<IActionResult> OnPostAsync(string addStudent)
