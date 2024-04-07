@@ -5,7 +5,10 @@
 }
 
 <h1>Login</h1>
-
+<script>
+    document.getElementById("logoutbtnid").style.display = "none";
+    document.getElementById("edituserbtn").style.display = "none";
+</script>
 @if (!string.IsNullOrEmpty(TempData["Message"] as string))
 {
     <div class="alert alert-info" role="alert">
@@ -28,10 +31,10 @@
     <button style="margin-top:10px" type="submit" class="btn btn-primary">Login</button>
 </form>
 
-    <script>
-        var jsonResponse = @Html.Raw(ViewData["ResponseData"]);
-        localStorage.setItem('jwtToken', jsonResponse.token);
-        setTimeout(() => {
-            window.location.href="/Student";
-        }, 2500);
-    </script>
+<script>
+    var jsonResponse = @Html.Raw(ViewData["ResponseData"]);
+    localStorage.setItem('jwtToken', jsonResponse.token);
+    setTimeout(() => {
+        window.location.href="/Student";
+    }, 2500);
+</script>

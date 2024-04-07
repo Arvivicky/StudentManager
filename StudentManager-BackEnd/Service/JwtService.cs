@@ -22,7 +22,7 @@ namespace StudentManager_BackEnd.Service
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name,user.Username)
+                new Claim("sub",user.Username)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));

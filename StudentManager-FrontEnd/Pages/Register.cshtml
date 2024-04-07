@@ -5,7 +5,12 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-
+<script>
+    document.getElementById("logoutbtnid").style.display = "none";
+    document.getElementById("edituserbtn").style.display = "none";
+    document.getElementById("registeruserbtn").style.display = "none";
+    
+</script>
 @if (!string.IsNullOrEmpty(TempData["Message"] as string))
 {
     <div class="alert alert-info" role="alert">

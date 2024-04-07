@@ -1,0 +1,28 @@
+﻿@page
+@using StudentManager_FrontEnd.Pages.LogoutPage
+@model TokenExpiredModel
+@{
+    ViewData["Title"] = "Token Expired";
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Token Expired</h5>
+        </div>
+        <div class="modal-body">
+            <p>Your token has expired. Do you want to continue or log out?</p>
+        </div>
+        <div class="modal-footer">
+            <form method="post" asp-page-handler="LogoutBtn">
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+            <form method="post" asp-page-handler="ContinueBtn">
+                <button type="submit"  class="btn btn-primary">Continue</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("navid").style.display = "none";
+</script>

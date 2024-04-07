@@ -83,7 +83,7 @@ namespace Controllers
             var user = await userRepo.LoadRefreshToken(refreshToken);
             if (user == null)
                 return BadRequest("Invalid refresh token");
-            if (user.TokenExpires> DateTime.Now)
+            if (user.TokenExpires< DateTime.Now)
                 return Unauthorized("Token Expired");
 
             var accessToken = jwtService.GenerateJwtToken(user);

@@ -1,3 +1,4 @@
+using StudentManager_FrontEnd.Service;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -5,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-
+builder.Services.AddScoped<ISetCookies,SetCookieService>();
 builder.Services.AddSession(options =>
 {
     // Configure session options here
