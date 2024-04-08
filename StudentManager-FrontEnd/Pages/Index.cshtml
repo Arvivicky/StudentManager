@@ -32,9 +32,11 @@
 </form>
 
 <script>
-    var jsonResponse = @Html.Raw(ViewData["ResponseData"]);
-    localStorage.setItem('jwtToken', jsonResponse.token);
-    setTimeout(() => {
-        window.location.href="/Student";
-    }, 2500);
+    var msg ="@TempData["Message"]";
+    if (msg == "Login successful!") {
+        setTimeout(() => {
+            window.location.href = "/Student";
+        }, 2500);
+    }
+    
 </script>

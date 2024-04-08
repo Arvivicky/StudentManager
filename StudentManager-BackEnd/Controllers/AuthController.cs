@@ -41,6 +41,7 @@ namespace Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserDto model)
         {
+            var roles = new List<string>{ "Admin" };
             var user=await userRepo.LoadUser(model);
             if (user!= null)
             {
@@ -53,8 +54,8 @@ namespace Controllers
                 Password = jwtService.HashPassword(model.Password)
             };
 
-            user=await userRepo.CreateUser(newUser);
-            return Ok(user);
+            user=await userRepo.CreateUser(newUser, roles);
+            return Ok("User Created.!");
         }
 
         [HttpPost("login")]
@@ -74,7 +75,7 @@ namespace Controllers
             user.TokenExpires = refreshToken.Expires;
             await userRepo.UpdateUser(user, user.Id);
 
-            return Ok(new { Token = accessToken, RefreshToken = refreshToken });
+            return Ok("Login success.!");
         }
 
         [HttpPost("refresh")]
@@ -83,7 +84,7 @@ namespace Controllers
             var user = await userRepo.LoadRefreshToken(refreshToken);
             if (user == null)
                 return BadRequest("Invalid refresh token");
-            if (user.TokenExpires< DateTime.Now)
+            if (user.TokenExpires< DateTime.UtcNow)
                 return Unauthorized("Token Expired");
 
             var accessToken = jwtService.GenerateJwtToken(user);

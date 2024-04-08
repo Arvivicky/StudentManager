@@ -52,8 +52,6 @@ namespace StudentManager_FrontEnd.Pages
             if (response.IsSuccessStatusCode)
             {
                 TempData["Message"] = "Login successful!";
-                ViewData["ResponseData"] = responseBody;
-
                 // Extract cookies from the response headers
                 var cookies = response.Headers.GetValues("Set-Cookie");
                 setCookies.SetCookies(cookies, httpContextAccessor);

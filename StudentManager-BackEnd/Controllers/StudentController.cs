@@ -7,7 +7,7 @@ using StudentManager_BackEnd.Entity;
 
 namespace Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Admin")]
     [ApiController]
     [Route("[controller]")]
     public class StudentController : ControllerBase
@@ -29,12 +29,10 @@ namespace Controllers
         [HttpGet("getAll")]
         public async Task<ActionResult<List<Student>>> GetAll()
         {
-            var authenticateResult = HttpContext.AuthenticateAsync();
             List<Student> students = await studentService.GetAllStudents();
             return Ok(students);
         }
 
-        //READ
         [HttpGet("getById/{int Id}")]
         public async Task<ActionResult<List<Student>>> GetById(int Id)
         {
@@ -42,7 +40,6 @@ namespace Controllers
             return Ok(student);
         }
 
-        //CREATE
         [HttpPost("/addStudent")]
         public async Task<ActionResult<Student>> Insert(Student student)
         {
@@ -50,7 +47,6 @@ namespace Controllers
             return Ok(students);
         }
 
-        //UPDATE
         [HttpPut("/updateStudent/{int Id}")]
         public async Task<ActionResult<Student>> Update(Student student, int Id)
         {
@@ -58,7 +54,6 @@ namespace Controllers
             return Ok(students);
         }
 
-        //DELETE
         [HttpDelete("/deleteStudent/{int Id}")]
         public async Task<ActionResult<string>> Delete(int Id)
         {

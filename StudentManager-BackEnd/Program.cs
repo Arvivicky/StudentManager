@@ -12,6 +12,7 @@ using StudentManager_BackEnd.Repository;
 using StudentManager_BackEnd.Service;
 using System;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,7 +62,6 @@ builder.Services.AddSwaggerGen(c =>
 // Add DbContext
 builder.Services.AddDbContext<ContextDb>(options =>
     options.UseSqlServer("Server=PAL-I005;Database=studentDb;Trusted_Connection=True;Encrypt=True;TrustServerCertificate=True;"));
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

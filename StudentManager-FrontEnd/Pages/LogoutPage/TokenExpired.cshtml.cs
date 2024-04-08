@@ -35,6 +35,8 @@ namespace StudentManager_FrontEnd.Pages.LogoutPage
             var refreshUrl = $"https://localhost:7089/api/Auth/refresh?refreshToken={refreshToken}";
             var response = await httpClient.PostAsync(refreshUrl, null);
             var responseBody = await response.Content.ReadAsStringAsync();
+            httpContextAccessor.HttpContext.Response.Cookies.Delete("Jwt");
+            httpContextAccessor.HttpContext.Response.Cookies.Delete("refreshToken");
             if (response.IsSuccessStatusCode)
             {
                 var cookies = response.Headers.GetValues("Set-Cookie");

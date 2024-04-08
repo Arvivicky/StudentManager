@@ -17,7 +17,7 @@
     </div>
 }
 
-@if (ViewData["StudentList"] !="" && ViewData["StudentList"] is string jsonString)
+@if (ViewData["StudentList"] is string jsonString && jsonString!="[]")
 {
     var jsonArray = JArray.Parse(jsonString);
     <div class="table-responsive">
@@ -75,14 +75,43 @@
 else
 {
     <p>No student data available.</p>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Roll Number</th>
+                <th>Age</th>
+                <th>CGPA</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+    <form method="post" asp-page-handler="OnPostAsync">
+        <tr id="newStd" style="display:none">
+            <td></td>
+            <td><input asp-for="NewStudentDto.Name" class="form-control" /></td>
+            <td><input asp-for="NewStudentDto.RollNumber" class="form-control" /></td>
+            <td><input asp-for="NewStudentDto.Age" class="form-control" /></td>
+            <td><input asp-for="NewStudentDto.Cgpa" class="form-control" /></td>
+            <td><button id="save" type="submit" name="addStudent" class="btn btn-success">Save</button></td>
+        </tr>
+    </form>
+    </table>
 }
 <script>
-    document.getElementById("add").addEventListener('click', () => {
+    document.getElementById("add").addEventListener('click', () =>
+    {
         document.getElementById("newStd").style.display = "";
     });
-    setTimeout(() => {
+
+    if(document.getElementById("alertid")!=null)
+    {
+        setTimeout(() => {
         document.getElementById("alertid").style.display = "none";
     }, 2000);
+    }
+    
     function toggleEditSaveDelete(studentId) {
         document.getElementById(`editBtn-${studentId}`).style.display = 'none';
         document.getElementById(`saveForm-${studentId}`).style.display = 'block';

@@ -1,7 +1,6 @@
 ﻿using Dto;
 using Microsoft.IdentityModel.Tokens;
 using StudentManager_BackEnd.Entity;
-using StudentsManagerSQL.Migrations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -20,10 +19,18 @@ namespace StudentManager_BackEnd.Service
         }
         public string GenerateJwtToken(User user)
         {
-            var claims = new[]
+            var claims = new List<Claim>
             {
-                new Claim("sub",user.Username)
+                new Claim("sub", user.Username),
+                new Claim(ClaimTypes.Name, user.Username)
             };
+
+            // Add roles as claims
+            foreach (var role in user.Roles) // Iterate over user.Roles
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.Name));
+            }
+
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -32,7 +39,7 @@ namespace StudentManager_BackEnd.Service
                 configuration["Jwt:Issuer"],
                 configuration["Jwt:Issuer"],
                 claims,
-                expires: DateTime.Now.AddMinutes(1),
+                expires: DateTime.UtcNow.AddMinutes(2),
                 signingCredentials: creds
             );
             var jwt= new JwtSecurityTokenHandler().WriteToken(token); ;
@@ -60,7 +67,7 @@ namespace StudentManager_BackEnd.Service
             var refreshToken = new RefreshTokenDto
             {
                 Token=Guid.NewGuid().ToString(),
-                Expires= DateTime.Now.AddDays(7)
+                Expires= DateTime.UtcNow.AddDays(7)
             };
             var cookieOptions = new CookieOptions
             {

@@ -46,7 +46,6 @@ namespace StudentManager_FrontEnd.Pages
             ViewData["User"] = username;
             var response = await httpClient.GetAsync("https://localhost:7089/Student/getAll");
             var responseBody = await response.Content.ReadAsStringAsync();
-
             if (response.IsSuccessStatusCode)
             {
                 responseBody = await response.Content.ReadAsStringAsync();
