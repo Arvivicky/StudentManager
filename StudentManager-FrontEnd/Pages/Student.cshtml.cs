@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,35 +9,78 @@ using StudentManager_FrontEnd.Dto;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using StudentManager_FrontEnd.Pages.LogoutPage;
+using StudentManager_FrontEnd.Service;
+using System.Net;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace StudentManager_FrontEnd.Pages
 {
+
     public class StudentModel : PageModel
     {
         private readonly HttpClient httpClient;
         private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly ISetCookies setCookies;
+        bool loggedin;
 
-        public StudentModel(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
+        public StudentModel(HttpClient httpClient, IHttpContextAccessor httpContextAccessor,ISetCookies setCookies)
         {
             this.httpContextAccessor = httpContextAccessor;
+            this.setCookies = setCookies;
+            loggedin = false;
             this.httpClient = httpClient;
-
         }
 
         [BindProperty]
         public NewStudentDto NewStudentDto { get; set; }
 
-
         public async Task<IActionResult> OnGetAsync()
         {
             var jwtToken = httpContextAccessor.HttpContext.Request.Cookies["jwt"];
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtTokenDecoded = tokenHandler.ReadToken(jwtToken) as JwtSecurityToken;
+            // Access the username from the JWT payload
+            string username = jwtTokenDecoded?.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            ViewData["User"] = username;
             var response = await httpClient.GetAsync("https://localhost:7089/Student/getAll");
             var responseBody = await response.Content.ReadAsStringAsync();
-            ViewData["StudentList"] = responseBody;
+            if (response.IsSuccessStatusCode)
+            {
+                responseBody = await response.Content.ReadAsStringAsync();
+                ViewData["StudentList"] = responseBody;
+                loggedin = true;
+                return Page();
+            }
+            else
+            {
+                try
+                {
+                    JObject jsonObject = JObject.Parse(responseBody);
+                    // Extract the message
+                    string errorMessage = (string)jsonObject["message"];
 
-            return Page();
+                    if (errorMessage == "Token has expired")
+                    {
+                        var refreshToken = httpContextAccessor.HttpContext.Request.Cookies["refreshToken"];
+                        var refreshUrl = $"https://localhost:7089/api/Auth/refresh?refreshToken={refreshToken}";
+                        var responseRefresh = await httpClient.PostAsync(refreshUrl, null);
+                        var responseBodyRefresh = await response.Content.ReadAsStringAsync();
+                        if (responseRefresh.IsSuccessStatusCode)
+                        {
+                            var cookies = responseRefresh.Headers.GetValues("Set-Cookie");
+                            setCookies.SetCookies(cookies, httpContextAccessor);
+                        }
+                        return RedirectToPage("/LogoutPage/TokenExpired");
+                    }
+                } catch (Exception ex)
+                {
+
+                }
+                return Unauthorized();
+            }
+            
         }
 
         public async Task<IActionResult> OnPostAsync(string addStudent)

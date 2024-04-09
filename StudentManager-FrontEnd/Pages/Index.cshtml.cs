@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using StudentManager_BackEnd.Dto;
 using StudentManager_FrontEnd.Dto;
+using StudentManager_FrontEnd.Service;
 
 namespace StudentManager_FrontEnd.Pages
 {
@@ -18,15 +19,17 @@ namespace StudentManager_FrontEnd.Pages
         private readonly ILogger<LoginModel> _logger;
         private readonly HttpClient _httpClient;
         private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly ISetCookies setCookies;
 
         [BindProperty]
         public UserDto UserDto { get; set; }
 
-        public LoginModel(ILogger<LoginModel> logger, HttpClient httpClient,IHttpContextAccessor httpContextAccessor)
+        public LoginModel(ILogger<LoginModel> logger, HttpClient httpClient,IHttpContextAccessor httpContextAccessor,ISetCookies setCookies)
         {
             _logger = logger;
             _httpClient = httpClient;
             this.httpContextAccessor = httpContextAccessor;
+            this.setCookies = setCookies;
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -49,27 +52,10 @@ namespace StudentManager_FrontEnd.Pages
             if (response.IsSuccessStatusCode)
             {
                 TempData["Message"] = "Login successful!";
-                ViewData["ResponseData"] = responseBody;
-
                 // Extract cookies from the response headers
                 var cookies = response.Headers.GetValues("Set-Cookie");
-
-                // Set cookies in the browser's cookie storage
-                foreach (var cookie in cookies)
-                {
-                    var cookieParts = cookie.Split(';')[0].Split('=');
-                    var cookieName = cookieParts[0];
-                    var cookieValue = cookieParts[1];
-                    var cookieOptions = new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Secure = true,
-                        SameSite = SameSiteMode.Lax,
-                    };
-
-                    // Add cookie to the response headers
-                    httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName, cookieValue,cookieOptions);
-                }
+                setCookies.SetCookies(cookies, httpContextAccessor);
+                
             }
             else
             {

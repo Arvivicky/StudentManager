@@ -1,24 +1,23 @@
 ﻿@page
 @using Newtonsoft.Json.Linq
 @model StudentModel
-@{
-    ViewData["Title"] = "Student Manager";
-
-}
 
 <div class="d-flex justify-content-between">
-    <h1>@ViewData["Title"]</h1>
+    <h3>Hi @ViewData["User"].!</h3>
     <button id="add" type="button" class="btn btn-primary">Add Student</button>
 </div>
+<script>
+    document.getElementById("registeruserbtn").style.display = "none";
+</script>
 @if (!string.IsNullOrEmpty(TempData["Message"] as string))
 {
-    <div class="alert alert-info" role="alert">
+    <div class="alert alert-info" role="alert" id="alertid">
         @TempData["Message"]
         <span>@ViewData["jwt"]</span>
     </div>
 }
 
-@if (ViewData["StudentList"] !="" && ViewData["StudentList"] is string jsonString)
+@if (ViewData["StudentList"] is string jsonString && jsonString!="[]")
 {
     var jsonArray = JArray.Parse(jsonString);
     <div class="table-responsive">
@@ -76,15 +75,43 @@
 else
 {
     <p>No student data available.</p>
-
-
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Roll Number</th>
+                <th>Age</th>
+                <th>CGPA</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+    <form method="post" asp-page-handler="OnPostAsync">
+        <tr id="newStd" style="display:none">
+            <td></td>
+            <td><input asp-for="NewStudentDto.Name" class="form-control" /></td>
+            <td><input asp-for="NewStudentDto.RollNumber" class="form-control" /></td>
+            <td><input asp-for="NewStudentDto.Age" class="form-control" /></td>
+            <td><input asp-for="NewStudentDto.Cgpa" class="form-control" /></td>
+            <td><button id="save" type="submit" name="addStudent" class="btn btn-success">Save</button></td>
+        </tr>
+    </form>
+    </table>
 }
-
 <script>
-    document.getElementById("add").addEventListener('click', () => {
+    document.getElementById("add").addEventListener('click', () =>
+    {
         document.getElementById("newStd").style.display = "";
     });
 
+    if(document.getElementById("alertid")!=null)
+    {
+        setTimeout(() => {
+        document.getElementById("alertid").style.display = "none";
+    }, 2000);
+    }
+    
     function toggleEditSaveDelete(studentId) {
         document.getElementById(`editBtn-${studentId}`).style.display = 'none';
         document.getElementById(`saveForm-${studentId}`).style.display = 'block';
