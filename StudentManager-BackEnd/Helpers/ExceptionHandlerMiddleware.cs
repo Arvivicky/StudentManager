@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace StudentManager_BackEnd.Helpers
 {

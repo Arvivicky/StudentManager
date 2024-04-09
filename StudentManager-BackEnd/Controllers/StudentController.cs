@@ -1,5 +1,3 @@
-using Entity;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service;
@@ -7,13 +5,11 @@ using StudentManager_BackEnd.Entity;
 
 namespace Controllers
 {
-    [Authorize(Roles ="Admin")]
     [ApiController]
     [Route("[controller]")]
     public class StudentController : ControllerBase
     {
         private readonly IStudentService studentService;
-
 
         public StudentController(IStudentService studentService)
         {
@@ -34,9 +30,9 @@ namespace Controllers
         }
 
         [HttpGet("getById/{int Id}")]
-        public async Task<ActionResult<List<Student>>> GetById(int Id)
+        public async Task<ActionResult<List<Student>>> GetByName(String username)
         {
-            Student student = await studentService.GetById(Id);
+            Student student = await studentService.GetByName(username);
             return Ok(student);
         }
 

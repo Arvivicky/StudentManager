@@ -6,21 +6,12 @@ namespace StudentManager_BackEnd.Entity
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        public string Name { get; set; }
         public string RollNumber { get; set; }
+        public string Name { get; set; }
+        public string dept { get; set; }
         public int Age { get; set; }
-        public float Cgpa { get; set; }
-        public Student(int id, string name, string rollNumber, int age, float cgpa)
-        {
-            Id = id;
-            Name = name;
-            RollNumber = rollNumber;
-            Age = age;
-            Cgpa = cgpa;
-        }
-        public Student()
-        {
-        }
+        public ICollection<SemesterDetails> SemesterDetails { get; set; } = new List<SemesterDetails>();
+
     }
+    
 }

@@ -26,11 +26,11 @@ namespace Service
             }
 
         }
-        public async Task<Student> GetById(int Id)
+        public async Task<Student> GetByName(string name)
         {
             try
             {
-                Student student = await studentsRepo.GetById(Id);
+                Student student = await studentsRepo.GetByName(name);
                 return student;
             }
             catch (Exception e)

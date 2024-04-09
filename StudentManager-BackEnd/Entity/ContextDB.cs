@@ -11,15 +11,17 @@ namespace Entity
         {
         }
         public virtual DbSet<Student> Student { get; set; }
+        public virtual DbSet<SemesterDetails> SemesterDetails { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<RoleMenu> RoleMenus { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //many-to-many
             modelBuilder.Entity<User>()
-                .HasMany(u => u.Roles)
-                .WithMany(r => r.Users)
+                .HasMany(user => user.Roles)
+                .WithMany(role => role.Users)
                 .UsingEntity<UserRole>(
                     j => j
                         .HasOne(ur => ur.Role)
@@ -33,6 +35,16 @@ namespace Entity
                     {
                         j.HasKey(ur => new { ur.UserId, ur.RoleId });
                     });
+
+            modelBuilder.Entity<SemesterDetails>()
+                .HasOne(sd => sd.Student)          
+                .WithMany(s => s.SemesterDetails) 
+                .HasForeignKey(sd => sd.StudentId); // Define the foreign key
+
+            modelBuilder.Entity<RoleMenu>()
+                .HasOne(rolemenu => rolemenu.Role)
+                .WithMany(role => role.RoleMenus)
+                .HasForeignKey(rolemenu => rolemenu.RoleId);
 
 
         }

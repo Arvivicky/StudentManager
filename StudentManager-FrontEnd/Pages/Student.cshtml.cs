@@ -22,13 +22,12 @@ namespace StudentManager_FrontEnd.Pages
         private readonly HttpClient httpClient;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly ISetCookies setCookies;
-        bool loggedin;
+        
 
         public StudentModel(HttpClient httpClient, IHttpContextAccessor httpContextAccessor,ISetCookies setCookies)
         {
             this.httpContextAccessor = httpContextAccessor;
             this.setCookies = setCookies;
-            loggedin = false;
             this.httpClient = httpClient;
         }
 
@@ -50,7 +49,6 @@ namespace StudentManager_FrontEnd.Pages
             {
                 responseBody = await response.Content.ReadAsStringAsync();
                 ViewData["StudentList"] = responseBody;
-                loggedin = true;
                 return Page();
             }
             else

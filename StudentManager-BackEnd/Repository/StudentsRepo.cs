@@ -17,9 +17,9 @@ namespace Repository
             List<Student> students = await contextDb.Student.ToListAsync();
             return students;
         }
-        public async Task<Student> GetById(int Id)
+        public async Task<Student> GetByName(string name)
         {
-            Student student = await contextDb.Student.FindAsync(Id);
+            Student student = contextDb.Student.FirstOrDefault(std=> std.Name==name); 
             if (student == null)
             {
                 throw new Exception("Student not found");
@@ -47,8 +47,24 @@ namespace Repository
                 studentEdit.RollNumber = student.RollNumber;
             if (student.Age != 0)
                 studentEdit.Age = student.Age;
-            if (student.Cgpa != 0)
-                studentEdit.Cgpa = student.Cgpa;
+            if (student.SemesterDetails != null)
+            {
+                foreach (var semesterDetail in student.SemesterDetails)
+                {
+                    var existingSemesterDetail = studentEdit.SemesterDetails.FirstOrDefault(sd => sd.Id == semesterDetail.Id);
+                    if (existingSemesterDetail != null)
+                    {
+                        existingSemesterDetail.SemesterNumber = semesterDetail.SemesterNumber;
+                        existingSemesterDetail.GPA = semesterDetail.GPA;
+                        existingSemesterDetail.CGPA = semesterDetail.CGPA;
+                    }
+                    else
+                    {
+                        studentEdit.SemesterDetails.Add(semesterDetail);
+                    }
+                }
+            }
+
             await contextDb.SaveChangesAsync();
             return studentEdit;
         }

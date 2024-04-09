@@ -9,6 +9,8 @@ namespace StudentManager_BackEnd.Entity
         public int Id { get; set; }
         public string Name { get; set; }
 
+        public ICollection<RoleMenu> RoleMenus { get; set; }=new List<RoleMenu>();
+
         [JsonIgnore] //to avoid infinite loooop (thanks to many-to-many)
         public ICollection<User> Users { get; set; } =new List<User>(); //initialize to avoid nullExp :)
     }

@@ -4,6 +4,7 @@ using Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace StudentManagerBackEnd.Migrations
 {
     [DbContext(typeof(ContextDb))]
-    partial class ContextDbModelSnapshot : ModelSnapshot
+    [Migration("20240409152417_UpdatedDb")]
+    partial class UpdatedDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,32 +40,6 @@ namespace StudentManagerBackEnd.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("StudentManager_BackEnd.Entity.RoleMenu", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Method")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("RoleMenus");
                 });
 
             modelBuilder.Entity("StudentManager_BackEnd.Entity.SemesterDetails", b =>
@@ -162,17 +139,6 @@ namespace StudentManagerBackEnd.Migrations
                     b.ToTable("UserRole");
                 });
 
-            modelBuilder.Entity("StudentManager_BackEnd.Entity.RoleMenu", b =>
-                {
-                    b.HasOne("StudentManager_BackEnd.Entity.Role", "Role")
-                        .WithMany("RoleMenus")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("StudentManager_BackEnd.Entity.SemesterDetails", b =>
                 {
                     b.HasOne("StudentManager_BackEnd.Entity.Student", "Student")
@@ -201,11 +167,6 @@ namespace StudentManagerBackEnd.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("StudentManager_BackEnd.Entity.Role", b =>
-                {
-                    b.Navigation("RoleMenus");
                 });
 
             modelBuilder.Entity("StudentManager_BackEnd.Entity.Student", b =>
