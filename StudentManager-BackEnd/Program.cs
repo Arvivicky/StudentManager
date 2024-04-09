@@ -32,6 +32,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentsRepo, StudentsRepo>();
 builder.Services.AddSingleton<IJwtService, JwtService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 // AddSwaggerGen service configuration

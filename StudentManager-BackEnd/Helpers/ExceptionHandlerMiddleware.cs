@@ -19,29 +19,9 @@ namespace StudentManager_BackEnd.Helpers
             {
                 await _next(context);
             }
-            catch (SecurityTokenExpiredException ex)
-            {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                context.Response.ContentType = "application/json";
-                var errorResponse = new
-                {
-                    message = "Token has expired"
-                };
-                await context.Response.WriteAsync(JsonConvert.SerializeObject(errorResponse));
-            }
-            catch (SecurityTokenValidationException ex)
-            {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                context.Response.ContentType = "application/json";
-                var errorResponse = new
-                {
-                    message = ex.Message
-                };
-                await context.Response.WriteAsync(JsonConvert.SerializeObject(errorResponse));
-            }
             catch (Exception ex)
             {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 context.Response.ContentType = "application/json";
                 var errorResponse = new
                 {

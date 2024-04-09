@@ -26,7 +26,6 @@ namespace StudentManager_BackEnd.Repository
         {
             await contextDb.Users.AddAsync(user);
             
-
             // Assign roles to the user
             foreach (var roleName in roles)
             {
@@ -59,7 +58,9 @@ namespace StudentManager_BackEnd.Repository
 
         public async Task<User> LoadRefreshToken(String refreshToken)
         {
-            var loaduser=await contextDb.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            var loaduser=await contextDb.Users
+                .Include(u => u.Roles)  // Navigation property won't load by default :)
+                .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
             return loaduser;
         }
     }
